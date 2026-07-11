@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 検索エンジンの検索結果に表示させないようにする -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>合格者編入塾</title>
+
+  <!-- KaTeXの読み込み -->
+  <!-- バージョンは tools/validate.js と必ず一致させること -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/mhchem.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <!-- スタイルの読み込み -->
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/exam.css" />
+</head>
+
+<body>
+  <!-- ヘッダー部分 -->
+  <header class="exam-header">
+    <div class="exam-header__inner">
+      <div class="exam-header__title">
+        <span class="eyebrow" id="examTerm"></span>
+        <h1 id="examTitle">読み込み中…</h1>
+      </div>
+      <div class="exam-header__meta">
+        <span class="timer" id="examTimer"></span>
+        <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+        <span class="progress__label"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 問</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="exam" id="examRoot"></main>
+
+  <div class="actionbar">
+    <div class="actionbar__inner">
+      <span class="actionbar__status" id="barStatus"></span>
+      <button type="button" class="btn-primary" id="submitBtn">答案を提出する</button>
+    </div>
+  </div>
+
+  <!-- ESモジュールのエントリ -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

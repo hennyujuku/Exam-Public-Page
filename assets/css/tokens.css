@@ -1,0 +1,42 @@
+/* =========================================================================
+   デザイントークン ── 色・書体・寸法（テーマ変更はこのファイルだけ）
+   ========================================================================= */
+
+:root {
+  /* 面 */
+  --page:        #F5F6F8;
+  --card:        #FFFFFF;
+  --card-sunken: #FBFBFC;
+
+  /* 文字 */
+  --ink:       #1B2330;
+  --ink-soft:  #4A5566;
+  --ink-faint: #8A94A4;
+
+  /* 罫線 */
+  --line:        #E5E9EF;
+  --line-strong: #CDD4DE;
+
+  /* アクセント: 試験インクの青 */
+  --accent:      #2A4BC0;
+  --accent-deep: #1E3690;
+  --accent-tint: #ECEFFB;
+
+  /* 採点ペンの赤（配点・必須のみ） */
+  --mark:      #B23A2B;
+  --mark-tint: #FBEDEB;
+
+  /* 状態 */
+  --ok:        #1E7A52;
+  --ok-tint:   #E7F3EC;
+  --warn:      #9A6300;
+  --warn-tint: #FBF1DD;
+
+  /* 書体 */
+  --serif: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Noto Serif JP", "Songti SC", serif;
+  --sans:  "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Meiryo", "Noto Sans JP", system-ui, -apple-system, sans-serif;
+  --mono:  ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+
+  --maxw: 760px;
+  --radius: 10px;
+}

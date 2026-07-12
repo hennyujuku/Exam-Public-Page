@@ -2,6 +2,26 @@
 import { el } from "./dom.js";
 import { updateProgress } from "./runtime.js";
 
+// marked.jsの初期設定
+if (typeof marked !== "undefined") {
+  marked.setOptions({
+    breaks: true, // \n を <br> に変換する
+    highlight: function(code, lang) {
+      if (typeof hljs !== "undefined") {
+        const language = hljs.getLanguage(lang) ? lang : "plaintext";
+        return hljs.highlight(code, { language }).value;
+      }
+      return code;
+    }
+  });
+}
+
+// 安全にMarkdownをパースする補助関数
+function parseMarkdown(text) {
+  if (!text) return "";
+  return typeof marked !== "undefined" ? marked.parse(text) : text;
+}
+
 /** スコープ内の $...$ / $$...$$ を KaTeX で描画（auto-render のグローバルを使用） */
 export function renderMath(scope) {
   const fn = globalThis.renderMathInElement;
@@ -53,7 +73,7 @@ export function buildQuestion(q, num) {
 
   return el("section", { class: "q", id: "card-" + q.id, "data-qid": q.id, "data-qtype": q.type }, [
     top,
-    el("div", { class: "q__prompt", html: q.prompt || "" }),
+    el("div", { class: "q__prompt", html: parseMarkdown(q.prompt) }),
     buildAnswerArea(q),
   ]);
 }
@@ -71,7 +91,7 @@ function buildAnswerArea(q) {
         el("label", { class: "choice", "data-kind": kind }, [
           input,
           el("span", { class: "choice__mark", text: c.id }),
-          el("span", { class: "choice__body", html: c.text || "" }),
+          el("span", { class: "choice__body", html: parseMarkdown(c.text) }),
         ])
       );
     });

@@ -436,3 +436,39 @@ body {
     to   { opacity: 1; transform: none; }
   }
 }
+
+/* Markdown コードブロックのスタイル (Qiita風)*/
+/* ブロックコード (``` で囲んだ部分) */
+.q__prompt pre,
+.choice__body pre {
+  background-color: #f6f8fa; /* 薄いグレーの背景 */
+  border: 1px solid #d0d7de; /* 枠線 */
+  border-radius: 6px;        /* 角丸 */
+  padding: 16px;             /* 内側の余白 */
+  overflow-x: auto;          /* 横スクロールを許可 */
+  margin: 1.2em 0;
+  line-height: 1.45;         /* 行間を少し詰める */
+}
+
+/* ブロックコード内のテキスト */
+.q__prompt pre code,
+.choice__body pre code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9em;
+  color: #24292f;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* インラインコード ( ` で囲んだ部分 ) */
+.q__prompt code,
+.choice__body code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9em;
+  background-color: #eff1f3; /* 薄いグレー */
+  color: #24292f;            /* 少し赤みを帯びた文字色 */
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  margin: 0 2px;
+}

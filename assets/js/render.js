@@ -71,11 +71,20 @@ export function buildQuestion(q, num) {
     el("span", { class: "q__points", text: q.points != null ? q.points + "点" : "" }),
   ]);
 
-  return el("section", { class: "q", id: "card-" + q.id, "data-qid": q.id, "data-qtype": q.type }, [
+  const section = el("section", { class: "q", id: "card-" + q.id, "data-qid": q.id, "data-qtype": q.type }, [
     top,
     el("div", { class: "q__prompt", html: parseMarkdown(q.prompt) }),
     buildAnswerArea(q),
   ]);
+
+    // DOM生成後に highlight.js を明示的に適用
+  if (typeof hljs !== "undefined") {
+    section.querySelectorAll('pre code').forEach((block) => {
+      hljs.highlightElement(block);
+    });
+  }
+
+  return section
 }
 
 /** 解答欄（型ごと） */

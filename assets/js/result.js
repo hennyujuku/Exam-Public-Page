@@ -13,7 +13,12 @@ export async function renderResultScreen(submissionId) {
 
   try {
     const data = await loadResult(submissionId);
-    if (!data || !data.ok) throw new Error("データの取得に失敗しました");
+    if (!data || !data.ok) {
+      if (data && data.error === "not_published_yet") {
+        throw new Error(data.message || "成績はまだ公開されていません。");
+      }
+      throw new Error("データの取得に失敗しました。");
+    }
 
     root.innerHTML = "";
 
@@ -118,7 +123,14 @@ export async function renderResultScreen(submissionId) {
 
   } catch (err) {
     console.error(err);
-    root.innerHTML = '<div style="color:red; text-align:center; padding:40px;">結果の読み込みに失敗しました。</div>';
+    root.innerHTML = `
+      <div style="text-align:center; padding:60px 20px;">
+        <div style="font-size: 3em; margin-bottom: 16px;">🔒</div>
+        <h2 style="color:var(--ink); margin-bottom: 8px;">アクセスできません</h2>
+        <p style="color:var(--text-muted);">${err.message}</p>
+        <button class="btn-primary" style="margin-top: 24px;" onclick="window.location.hash=''">トップへ戻る</button>
+      </div>
+    `;
   }
 }
 

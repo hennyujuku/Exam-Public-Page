@@ -49,6 +49,13 @@ export function showConfirmation(payload, opts = {}) {
       // ▼ 即時公開（または公開日時を過ぎている）場合
       children.push(el("hr", { style: "margin: 24px 0; border: none; border-top: 1px dashed var(--border, #ccc);" }));
       children.push(el("p", { text: "今回の模試の採点結果が確認できます。" }));
+      children.push(el("p", { text: "以下の提出IDを用いると、後日からでもトップページから成績照会をすることが出来ます。必要に応じて保存してください。" }));
+
+      // IDをコピーしやすくするためのボックス
+      children.push(el("div", {
+        style: "background: #f6f8fa; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 1.1em; text-align: center; border: 1px solid #d0d7de; user-select: all;",
+        text: opts.result.submission_id
+      }));
       
       const resultBtn = el("button", { 
         class: "btn-primary", 

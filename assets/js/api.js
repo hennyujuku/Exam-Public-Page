@@ -48,6 +48,17 @@ export async function loadExam() {
   };
 }
 
+/** トップページ用に公開中の試験一覧を取得する */
+export async function loadExamList() {
+  const { data, error } = await supabase
+    .schema('exam')
+    .from('exams')
+    .select('exam_id, title, term, duration_minutes, total_points')
+    .order('created_at', { ascending: false }); // 新しい順に取得
+  if (error) throw error;
+  return data;
+}
+
 /** 回答を Edge Function へ送信（採点・記録はサーバ側）。応答を読める */
 export async function submitResponses(payload) {
   const { data, error } = await supabase.functions.invoke(SUBMIT_FUNCTION, { body: payload });

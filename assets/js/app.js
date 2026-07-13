@@ -6,6 +6,8 @@ import { buildIntro, buildQuestion, renderMath } from "./render.js";
 import { onSubmit } from "./submit.js";
 import { showError } from "./screens.js";
 import { renderResultScreen } from "./result.js";
+import { getParam } from "./dom.js"; // URLパラメータ取得用
+import { renderTopPage } from "./top.js";
 
 function build(data) {
   state.data = data;
@@ -34,14 +36,29 @@ function build(data) {
 
 function handleRoute() {
   const hash = window.location.hash;
+  const examId = getParam("exam");
 
+  // 1. 成績結果画面へのルーティング
   if (hash.startsWith("#result=")) {
-    // 成績結果画面の描画
     const submissionId = hash.replace("#result=", "");
+    
+    // ヘッダーのメタエリア（タイマーや進捗）を非表示にする
+    const metaArea = document.querySelector(".exam-header__meta");
+    if (metaArea) metaArea.style.display = "none";
+    
     renderResultScreen(submissionId);
-  } else {
-    // 通常の模試画面の描画
+  } 
+  // 2. 試験画面へのルーティング
+  else if (examId) {
+    // ヘッダーのメタエリアを再表示
+    const metaArea = document.querySelector(".exam-header__meta");
+    if (metaArea) metaArea.style.display = "flex";
+    
     loadExam().then(build).catch(showError);
+  } 
+  // 3. どちらもない場合はトップページへのルーティング
+  else {
+    renderTopPage();
   }
 }
 

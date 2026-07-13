@@ -242,27 +242,94 @@ function buildStatsView(data) {
   wrap.appendChild(el("h3", { text: "試験全体の統計", style: "margin-bottom: 16px;" }));
   wrap.appendChild(el("p", { text: `総受験人数: ${stats.total_examinees} 人 ／ 全体平均: ${stats.average_score} 点`, style: "margin-bottom: 16px; font-weight:bold;" }));
 
-  // 点数分布テーブル
-  const distTable = el("table", { style: "width: 100%; border-collapse: collapse; margin-bottom: 32px; text-align:center; border: 1px solid var(--border);" });
-  distTable.innerHTML = `<tr style="background:#f6f8fa;"><th style="padding:12px; border-bottom:1px solid var(--border);">得点</th><th style="padding:12px; border-bottom:1px solid var(--border);">人数</th></tr>`;
-  
-  const dist = stats.score_distribution || {};
-  Object.keys(dist).sort((a,b) => b - a).forEach(score => {
-    distTable.innerHTML += `<tr><td style="padding:12px; border-bottom:1px solid var(--border);">${score} 点</td><td style="padding:12px; border-bottom:1px solid var(--border);">${dist[score]} 人</td></tr>`;
-  });
-  wrap.appendChild(distTable);
+  // グラフCanvasを作成
+  const chartContainer = el("div", { style: "width: 100%; max-width: 600px; margin: 0 auto 32px auto;" });
+  const canvas = el("canvas", { id: "scoreChart" });
+  chartContainer.appendChild(canvas);
+  wrap.appendChild(chartContainer);
 
-  // 3. 設問別平均点
-  wrap.appendChild(el("h3", { text: "各設問の平均得点", style: "margin-bottom: 16px;" }));
-  const qTable = el("table", { style: "width: 100%; border-collapse: collapse; text-align:center; border: 1px solid var(--border);" });
-  qTable.innerHTML = `<tr style="background:#f6f8fa;"><th style="padding:12px; border-bottom:1px solid var(--border);">設問</th><th style="padding:12px; border-bottom:1px solid var(--border);">平均得点 / 配点</th></tr>`;
+  // 階級データと自分の位置を計算
+  const histData = createHistogramData(stats.score_distribution, data.exam.total_points, mine.total_score);
   
-  data.questions.forEach(q => {
-    qTable.innerHTML += `<tr><td style="padding:12px; border-bottom:1px solid var(--border);">問 ${q.position}</td><td style="padding:12px; border-bottom:1px solid var(--border);">${q.average_points} / ${q.points_max} 点</td></tr>`;
-  });
-  wrap.appendChild(qTable);
-  
-  // （※注：Edge Functionの仕様上、各設問の「点数分布」は算出データに含まれていないため、ここでは「平均得点」のみを描画しています）
+  // 自分のいる階級だけ目立つ色（赤系）にする
+  const bgColors = histData.data.map((_, i) => i === histData.myBinIndex ? '#B23A2B' : '#e2e6ea');
+
+  // DOMが画面にアペンドされた直後にグラフを描画するため、setTimeoutを使用
+  setTimeout(() => {
+    if (typeof Chart !== "undefined") {
+      new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: histData.labels,
+          datasets: [{
+            label: '人数',
+            data: histData.data,
+            backgroundColor: bgColors,
+            borderWidth: 0,
+            borderRadius: 4, // 棒の角を少し丸くする
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 } // 人数は必ず整数なので1刻み
+            }
+          },
+          plugins: {
+            legend: { display: false }, // 「人数」の凡例を非表示（シンプルにするため）
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.raw} 人`
+              }
+            }
+          }
+        }
+      });
+    }
+  }, 0);
 
   return wrap;
+}
+
+/**
+ * 満点に応じて最適な階級幅を決定し、グラフ用のデータを生成する補助関数
+ */
+function createHistogramData(rawDistribution, totalPoints, myScore) {
+  // 1. 満点に応じて階級幅（binSize）を決定
+  let binSize = 10;
+  if (totalPoints <= 10) binSize = 1;        // 10点満点以下なら1点刻み
+  else if (totalPoints <= 30) binSize = 3;   // 30点満点以下なら3点刻み
+  else if (totalPoints <= 50) binSize = 5;   // 50点満点以下なら5点刻み
+  else if (totalPoints <= 100) binSize = 10; // 100点満点以下なら10点刻み
+
+  const numBins = Math.ceil(totalPoints / binSize);
+  const labels = [];
+  const data = new Array(numBins).fill(0);
+  let myBinIndex = -1;
+
+  // 2. 階級のラベルを作成し、自分のスコアが属するインデックスを特定
+  for (let i = 0; i < numBins; i++) {
+    const min = i * binSize;
+    const max = (i === numBins - 1) ? totalPoints : (i + 1) * binSize - 1;
+    labels.push(binSize === 1 ? `${min}点` : `${min}〜${max}点`);
+
+    if (myScore >= min && myScore <= max) {
+      myBinIndex = i;
+    }
+  }
+
+  // 3. 生の分布データを階級ごとに集計
+  for (const [scoreStr, count] of Object.entries(rawDistribution || {})) {
+    const score = Number(scoreStr);
+    let binIndex = Math.floor(score / binSize);
+    
+    // 満点ピッタリの人が配列の最後尾を超えないための安全処理
+    if (binIndex >= numBins) binIndex = numBins - 1; 
+    
+    data[binIndex] += count;
+  }
+
+  return { labels, data, myBinIndex };
 }

@@ -17,7 +17,7 @@ if (typeof marked !== "undefined") {
 }
 
 // 安全にMarkdownをパースする補助関数
-function parseMarkdown(text) {
+export function parseMarkdown(text) {
   if (!text) return "";
   return typeof marked !== "undefined" ? marked.parse(text) : text;
 }

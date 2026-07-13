@@ -38,6 +38,53 @@ export function showConfirmation(payload, opts = {}) {
     children.push(el("p", { class: "intro__instructions", text: "本番ではこの内容が送信され、自動採点のうえ記録されます。" }));
     children.push(el("pre", { class: "demo-dump", text: JSON.stringify(payload, null, 2) }));
   }
+  else if (opts.result && opts.result.ok) {
+    // ==========================================
+    // SPA用：公開日時による表示の切り替え
+    // ==========================================
+    const publishedAt = new Date(opts.result.results_published_at);
+    const now = new Date();
+
+    if (now >= publishedAt) {
+      // ▼ 即時公開（または公開日時を過ぎている）場合
+      children.push(el("hr", { style: "margin: 24px 0; border: none; border-top: 1px dashed var(--border, #ccc);" }));
+      children.push(el("p", { text: "今回の模試の採点結果が確認できます。" }));
+      
+      const resultBtn = el("button", { 
+        class: "btn-primary", 
+        text: "成績結果画面へ進む",
+        style: "margin-top: 16px;" 
+      });
+      
+      // ボタンクリックでURLのハッシュを書き換える（ページリロードなし）
+      resultBtn.addEventListener("click", () => {
+        window.location.hash = `result=${opts.result.submission_id}`;
+      });
+      
+      children.push(resultBtn);
+
+    } else {
+      // ▼ 後日公開（公開日時が未来）の場合
+      const dateString = publishedAt.toLocaleString("ja-JP", {
+        year: "numeric", month: "short", day: "numeric", 
+        hour: "2-digit", minute: "2-digit"
+      });
+
+      children.push(el("hr", { style: "margin: 24px 0; border: none; border-top: 1px dashed var(--border, #ccc);" }));
+      children.push(el("h3", { text: "成績結果の公開について", style: "margin-bottom: 8px;" }));
+      children.push(el("p", { text: `成績結果は ${dateString} 以降に公開されます。` }));
+      children.push(el("p", { 
+        text: "公開日時になりましたら、以下の受験IDを使用して成績照会ページから結果を確認してください。この画面をスクリーンショット等で保存しておくことをお勧めします。",
+        style: "font-size: 0.9em; margin-bottom: 12px;"
+      }));
+      
+      // IDをコピーしやすくするためのボックス
+      children.push(el("div", {
+        style: "background: #f6f8fa; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 1.1em; text-align: center; border: 1px solid #d0d7de; user-select: all;",
+        text: opts.result.submission_id
+      }));
+    }
+  }
 
   const main = $("#examRoot");
   main.innerHTML = "";

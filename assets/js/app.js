@@ -5,6 +5,7 @@ import { state, updateProgress, startTimer } from "./runtime.js";
 import { buildIntro, buildQuestion, renderMath } from "./render.js";
 import { onSubmit } from "./submit.js";
 import { showError } from "./screens.js";
+import { renderResultScreen } from "./result.js";
 
 function build(data) {
   state.data = data;
@@ -31,8 +32,25 @@ function build(data) {
   state.startedAt = new Date();
 }
 
+function handleRoute() {
+  const hash = window.location.hash;
+
+  if (hash.startsWith("#result=")) {
+    // 成績結果画面の描画
+    const submissionId = hash.replace("#result=", "");
+    renderResultScreen(submissionId);
+  } else {
+    // 通常の模試画面の描画
+    loadExam().then(build).catch(showError);
+  }
+}
+
 function init() {
-  loadExam().then(build).catch(showError);
+  // ハッシュが変更された時にルート処理を再実行する
+  window.addEventListener("hashchange", handleRoute);
+  
+  // 初回ロード時
+  handleRoute();
 }
 
 

@@ -9,5 +9,6 @@ export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// 回答を採点・記録する Edge Function 名
+// Edge Function 名
 export const SUBMIT_FUNCTION = "submit-exam";
+export const GET_RESULT_FUNCTION = "get-result";

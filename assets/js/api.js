@@ -1,4 +1,4 @@
-import { supabase, SUBMIT_FUNCTION } from "./config.js";
+import { supabase, SUBMIT_FUNCTION, GET_RESULT_FUNCTION } from "./config.js";
 import { getParam } from "./dom.js";
 
 // Supabaseから公開データを取得する関数
@@ -51,6 +51,15 @@ export async function loadExam() {
 /** 回答を Edge Function へ送信（採点・記録はサーバ側）。応答を読める */
 export async function submitResponses(payload) {
   const { data, error } = await supabase.functions.invoke(SUBMIT_FUNCTION, { body: payload });
+  if (error) throw error;
+  return data;
+}
+
+/** 成績結果を取得する */
+export async function loadResult(submissionId) {
+  const { data, error } = await supabase.functions.invoke(GET_RESULT_FUNCTION, {
+    body: { submission_id: submissionId }
+  });
   if (error) throw error;
   return data;
 }

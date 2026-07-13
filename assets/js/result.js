@@ -136,10 +136,30 @@ export async function renderResultScreen(submissionId) {
 
 /** 設問1問分の成績を描画（render.jsを踏襲） */
 function buildResultQuestion(q) {
-  const top = el("div", { class: "q__top" }, [
-    el("span", { class: "q__num", text: "問 " + q.position }),
-    // 要件: 右上に赤色で獲得点を表示
-    el("span", { class: "q__points", text: `${q.points_earned} / ${q.points_max} 点`, style: "color: #B23A2B; font-weight: bold;" }),
+  // 正答率（得点率）の計算（ゼロ割り算を防ぐ）
+  const correctRate = q.points_max > 0 
+    ? Math.round((q.average_points / q.points_max) * 100) 
+    : 0;
+
+  // ヘッダー部分の構築
+  const top = el("div", { 
+    class: "q__top", 
+    style: "display: flex; align-items: center;" // フレックスボックスで横並びに
+  }, [
+    // 左側：問番号と自分の得点
+    el("div", { style: "display: flex; align-items: center; gap: 12px;" }, [
+      el("span", { class: "q__num", text: "問 " + q.position }),
+      el("span", { 
+        class: "q__points", 
+        text: `${q.points_earned} / ${q.points_max} 点`, 
+        style: "color: #B23A2B; font-weight: bold; background: #fbeeed; padding: 4px 10px; border-radius: 20px; font-size: 0.9em;" 
+      }),
+    ]),
+    
+    // 右側：全体の正答率（margin-left: auto で右端に押しやる）
+    el("div", { style: "margin-left: auto; font-size: 0.95em; color: #666; font-weight: bold;" }, [
+      el("span", { text: `正答率: ${correctRate}%` })
+    ])
   ]);
 
   const section = el("section", { class: "q" }, [

@@ -7,7 +7,7 @@ export async function renderTopPage() {
   root.innerHTML = '<div style="text-align:center; padding: 40px;">読み込み中...</div>';
 
   // ヘッダーをトップページ用に書き換え
-  $("#examTerm").textContent = "全国大学編入公開模試";
+  $("#examTerm").textContent = "合格者編入塾-公開模試";
   $("#examTitle").textContent = "受験ポータル";
   
   // 進行度バーやタイマーなど、トップページに不要なものを隠す
@@ -25,7 +25,7 @@ export async function renderTopPage() {
       style: "display:flex; margin-bottom: 24px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border, #d0d7de);" 
     });
     
-    const btnExamList = el("button", { text: "模擬試験を受験する" });
+    const btnExamList = el("button", { text: "試験を受験する" });
     const btnResult = el("button", { text: "成績照会" });
     
     [btnExamList, btnResult].forEach(btn => {
@@ -98,7 +98,7 @@ export async function renderTopPage() {
     // --- 【タブ2】成績照会ビュー ---
     const resultQueryView = el("div", { style: "display: none; padding: 40px 24px; background: #fff; border: 1px solid var(--border); border-radius: 8px; text-align: center;" });
     resultQueryView.appendChild(el("h3", { text: "成績結果の照会", style: "margin-bottom: 16px; font-size: 1.4em;" }));
-    resultQueryView.appendChild(el("p", { text: "答案提出後に発行された 受験ID（submission_id） を入力してください。", style: "color: var(--text-muted); margin-bottom: 32px;" }));
+    resultQueryView.appendChild(el("p", { text: "回答提出後に発行された 提出ID を入力してください。", style: "color: var(--text-muted); margin-bottom: 32px;" }));
 
     const inputId = el("input", { 
       type: "text", 
@@ -117,7 +117,7 @@ export async function renderTopPage() {
       if (val) {
         window.location.hash = `result=${val}`;
       } else {
-        alert("受験IDを入力してください。");
+        alert("提出IDを入力してください。");
       }
     });
 

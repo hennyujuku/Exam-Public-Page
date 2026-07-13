@@ -35,7 +35,7 @@ export async function renderResultScreen(submissionId) {
     });
     
     const btnMyResult = el("button", { text: "自分の成績" });
-    const btnStats = el("button", { text: "試験統計" });
+    const btnStats = el("button", { text: "試験の統計データ" });
     
     // タブボタンの共通のベーススタイル
     [btnMyResult, btnStats].forEach(btn => {
@@ -290,6 +290,7 @@ function buildStatsView(data) {
           }]
         },
         options: {
+          animation: false, // 描画アニメーションの無効化
           responsive: true,
           scales: {
             y: {

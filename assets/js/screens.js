@@ -48,7 +48,7 @@ export function showConfirmation(payload, opts = {}) {
     if (now >= publishedAt) {
       // ▼ 即時公開（または公開日時を過ぎている）場合
       children.push(el("hr", { style: "margin: 24px 0; border: none; border-top: 1px dashed var(--border, #ccc);" }));
-      children.push(el("p", { text: "今回の模試の採点結果が確認できます。" }));
+      children.push(el("p", { text: "今回の試験の採点結果が確認できます。" }));
       children.push(el("p", { text: "以下の提出IDを用いると、後日からでもトップページから成績照会をすることが出来ます。必要に応じて保存してください。" }));
 
       // IDをコピーしやすくするためのボックス
@@ -81,7 +81,7 @@ export function showConfirmation(payload, opts = {}) {
       children.push(el("h3", { text: "成績結果の公開について", style: "margin-bottom: 8px;" }));
       children.push(el("p", { text: `成績結果は ${dateString} 以降に公開されます。` }));
       children.push(el("p", { 
-        text: "公開日時になりましたら、以下の受験IDを使用して成績照会ページから結果を確認してください。この画面をスクリーンショット等で保存しておくことをお勧めします。",
+        text: "公開日時になりましたら、以下の提出IDを使用して成績照会ページから結果を確認してください。この画面をスクリーンショット等で保存しておくことをお勧めします。",
         style: "font-size: 0.9em; margin-bottom: 12px;"
       }));
       
@@ -107,7 +107,7 @@ export function showError(err) {
   let msg, sub;
   if (err && err.kind === "no-param") {
     msg = "模試が指定されていません";
-    sub = "URL に ?exam=<模試ID> を付けて開いてください（例: ?exam=2026-07_chemistry）。";
+    sub = "URL に ?exam=<模試ID> を付けて開いてください";
   } else if (err && err.kind === "not-found") {
     msg = "模試データが見つかりません";
     sub = "指定された模試IDのファイルが存在しません。URLをご確認ください。";

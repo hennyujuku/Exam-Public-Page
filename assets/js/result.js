@@ -324,6 +324,7 @@ function createHistogramData(rawDistribution, totalPoints, myScore) {
   else if (totalPoints <= 30) binSize = 3;   // 30点満点以下なら3点刻み
   else if (totalPoints <= 50) binSize = 5;   // 50点満点以下なら5点刻み
   else if (totalPoints <= 100) binSize = 10; // 100点満点以下なら10点刻み
+  else binSize = 12;                         // 100点満点以上なら12点刻み
 
   const numBins = Math.ceil(totalPoints / binSize);
   const labels = [];

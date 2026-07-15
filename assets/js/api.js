@@ -53,7 +53,7 @@ export async function loadExamList() {
   const { data, error } = await supabase
     .schema('exam')
     .from('exams')
-    .select('exam_id, title, term, duration_minutes, total_points')
+    .select('exam_id, title, exam_type, term, duration_minutes, exam_subject, total_points')
     .order('created_at', { ascending: false }); // 新しい順に取得
   if (error) throw error;
   return data;

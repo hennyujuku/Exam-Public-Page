@@ -73,26 +73,67 @@ export async function renderTopPage() {
     if (exams.length === 0) {
       examListView.appendChild(el("p", { text: "現在、公開されている試験はありません。", style: "text-align:center; padding:40px; color:var(--text-muted);" }));
     } else {
-      const list = el("ul", { style: "list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px;" });
-      exams.forEach(ex => {
+      // 1. データを試験種別で振り分ける
+      const mockExams = exams.filter(ex => ex.exam_type === "mock");
+      const confExams = exams.filter(ex => ex.exam_type === "confirmation");
+
+      // 試験カード（li要素）を生成する共通関数
+      const createExamListItem = (ex) => {
         const li = el("li", {
-          style: "border: 1px solid var(--border); border-radius: 8px; padding: 20px; background: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);"
+          style: "border: 1px solid var(--border, #d0d7de); border-radius: 8px; padding: 20px; background: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 12px;"
         }, [
           el("div", {}, [
             el("div", { text: ex.term || "通年", style: "font-size: 0.85em; color: var(--text-muted); margin-bottom: 6px; font-weight:bold;" }),
             el("div", { text: ex.title, style: "font-weight: bold; font-size: 1.2em; color: var(--ink); margin-bottom: 4px;" }),
             el("div", { text: `制限時間: ${ex.duration_minutes}分 / 配点: ${ex.total_points}点`, style: "font-size: 0.9em; color: #666;" })
           ]),
-          el("button", { class: "btn-primary", text: "受験ページへ進む", style: "padding: 10px 20px; font-size: 0.95em;" })
+          el("button", { class: "btn-primary", text: "受験ページへ", style: "padding: 10px 20px; font-size: 0.95em;" })
         ]);
-        
-        // ボタンクリックで試験ページへ遷移
-        li.querySelector("button").addEventListener("click", () => {
-          window.location.href = `?exam=${ex.exam_id}`;
+        li.querySelector("button").addEventListener("click", () => window.location.href = `?exam=${ex.exam_id}`);
+        return li;
+      };
+
+      // 2. 模試セクション（アコーディオン）の構築
+      const mockDetails = el("details", { style: "margin-bottom: 24px;" });
+      // デフォルトで開いてほしければ以下のコメントアウトのように記述せよ
+      // const mockDetails = el("details", { open: false, style: "margin-bottom: 24px;" }); 
+      const mockSummary = el("summary", { text: "模試", style: "cursor: pointer; font-size: 1.2em; font-weight: bold; padding: 12px 0; border-bottom: 2px solid #eee; margin-bottom: 16px; user-select: none;" });
+      mockDetails.appendChild(mockSummary);
+
+      if (mockExams.length === 0) {
+        mockDetails.appendChild(el("p", { text: "現在公開されている模試はありません。", style: "color:var(--text-muted); margin-left: 16px;" }));
+      } else {
+        const mockList = el("ul", { style: "list-style: none; padding: 0; margin: 0;" });
+        mockExams.forEach(ex => mockList.appendChild(createExamListItem(ex)));
+        mockDetails.appendChild(mockList);
+      }
+      examListView.appendChild(mockDetails);
+
+      // 3. 確認テストセクション（アコーディオン）の構築
+      const confDetails = el("details", { style: "margin-bottom: 24px;" });
+      const confSummary = el("summary", { text: "確認テスト", style: "cursor: pointer; font-size: 1.2em; font-weight: bold; padding: 12px 0; border-bottom: 2px solid #eee; margin-bottom: 16px; user-select: none;" });
+      confDetails.appendChild(confSummary);
+
+      if (confExams.length === 0) {
+        confDetails.appendChild(el("p", { text: "現在公開されている確認テストはありません。", style: "color:var(--text-muted); margin-left: 16px;" }));
+      } else {
+        // 科目ごとにグループ化する
+        const groupedBySubject = {};
+        confExams.forEach(ex => {
+          const subject = ex.exam_subject || "その他";
+          if (!groupedBySubject[subject]) groupedBySubject[subject] = [];
+          groupedBySubject[subject].push(ex);
         });
-        list.appendChild(li);
-      });
-      examListView.appendChild(list);
+
+        // 科目ごとに見出しとリストを生成
+        for (const [subject, subjectExams] of Object.entries(groupedBySubject)) {
+          confDetails.appendChild(el("h4", { text: subject, style: "margin: 16px 0 12px 16px; font-size: 1.05em; color: var(--ink); border-left: 4px solid var(--primary, #0056b3); padding-left: 8px;" }));
+          const confList = el("ul", { style: "list-style: none; padding: 0; margin: 0 0 24px 0;" });
+          subjectExams.forEach(ex => confList.appendChild(createExamListItem(ex)));
+          confDetails.appendChild(confList);
+        }
+      }
+      examListView.appendChild(confDetails);
     }
 
     // --- 【タブ2】成績照会ビュー ---

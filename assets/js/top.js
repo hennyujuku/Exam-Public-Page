@@ -80,14 +80,14 @@ export async function renderTopPage() {
       // 試験カード（li要素）を生成する共通関数
       const createExamListItem = (ex) => {
         const li = el("li", {
-          style: "border: 1px solid var(--border, #d0d7de); border-radius: 8px; padding: 20px; background: #fff; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 12px;"
+          style: "border: 1px solid var(--border, #d0d7de); border-radius: 8px; padding: 20px; background: #fff; display: flex; justify-content: space-between; align-items: center; gap: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 12px;"
         }, [
-          el("div", {}, [
+          el("div", { style: "flex: 1; min-width: 0;" }, [
             el("div", { text: ex.term || "通年", style: "font-size: 0.85em; color: var(--text-muted); margin-bottom: 6px; font-weight:bold;" }),
-            el("div", { text: ex.title, style: "font-weight: bold; font-size: 1.2em; color: var(--ink); margin-bottom: 4px;" }),
+            el("div", { text: ex.title, style: "font-weight: bold; font-size: 1.2em; color: var(--ink); margin-bottom: 4px; word-break: break-word;" }),
             el("div", { text: `制限時間: ${ex.duration_minutes}分 / 配点: ${ex.total_points}点`, style: "font-size: 0.9em; color: #666;" })
           ]),
-          el("button", { class: "btn-primary", text: "受験ページへ", style: "padding: 10px 20px; font-size: 0.95em;" })
+          el("button", { class: "btn-primary", text: "受験ページへ", style: "padding: 10px 20px; font-size: 0.95em; flex-shrink: 0; white-space: nowrap;" })
         ]);
         li.querySelector("button").addEventListener("click", () => window.location.href = `?exam=${ex.exam_id}`);
         return li;
